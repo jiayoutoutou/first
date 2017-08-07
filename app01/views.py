@@ -159,3 +159,8 @@ def model_modify_student(request):
             sqlhelper.modify("delete from student where id=%s", student_id)
         return HttpResponse("ok")
 
+
+
+def index(request):
+    return HttpResponse("...")
+
