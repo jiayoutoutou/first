@@ -1,0 +1,194 @@
+{% extends "layout.html" %}
+
+{% block css %}
+    <style>
+         .shade{
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left:0;
+            right: 0;
+            background-color: green;
+            opacity: 0.4;
+        }
+         .load{
+             position: fixed;
+             width: 32px;
+             height: 32px;
+             top:50%;
+             bottom: 50%;
+             left:50%;
+             right: 50%;
+             background-image: url("/static/pictures/load.gif");
+         }
+        .hide{
+            display: none;
+        }
+
+        .models{
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            margin-left: -100px;
+            margin-top: -100px;
+            height: 200px;
+            width: 200px;
+            background-color: wheat;
+        }
+        .select{
+            display: inline-block;
+            width: 80px;
+            height: 120px;
+        }
+        .button{
+            display: inline-block;
+            width: 30px;
+            vertical-align: 20px;
+        }
+        .button button{
+            width: 30px;
+        }
+        .submit{
+            margin-left: 50px;
+        }
+        .operate{
+            width: 60px;
+            margin: 0 auto;
+        }
+        .name{
+            margin-top: 5px;
+            margin-bottom: 8px;
+        }
+    </style>
+{% endblock %}
+
+{% block xx %}
+    <h1>教师信息</h1>
+    <button class="shows" operate="add">添加教师</button>
+    <table border="1">
+        <tr>
+            <th>id</th>
+            <th>姓名</th>
+            <th>讲授班级</th>
+            <th>操作</th>
+        </tr>
+        {% for foo in teacher_list %}
+            <tr>
+                <td>{{ foo.id }}</td>
+                <td>{{ foo.name }}</td>
+                <td>
+                    {% for row in foo.titles %}
+                        <span style="border: 1px solid red">{{ row }}</span>
+                    {% endfor %}
+                </td>
+                <td><button class="shows" operate="edite" value="{{ foo.name }}" id="{{ foo.id }}">编辑</button>
+                    |
+                    <button class="shows" operate="del" value="{{ foo.name }}" id="{{ foo.id }}">删除</button></td>
+            </tr>
+        {% endfor %}
+    </table>
+    <div class="shade hide handle"></div>
+    <div class="hide load handle"></div>
+    <div class="models hide ">
+        <h3 class="operate"></h3>
+        <input class="name" type="text" placeholder="教师姓名">
+        <div class="contents">
+             <select class="select choice" name="choice" size="5" multiple></select>
+            <div class="button">
+                <button> > </button>
+                <button> >> </button>
+                <button> < </button>
+                <button> << </button>
+            </div>
+            <select class="select result" name="result" size="5" multiple></select>
+        </div>
+        <button class="submit">提交</button>
+        <button class="cancle">取消</button>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="/static/jquery-3.2.1.js"></script>
+    <script>
+        $(function () {
+            var $operate,$id;
+            $(".shows").click(function () {
+                var $name=$(this).val(); /*获取点击按钮对应的教师姓名*/
+                $id=$(this).prop("id");/*获取当前老师的id*/
+                $operate=$(this).attr("operate");
+                $(".name").val($name);
+                $(".operate").text($(this).text());
+                $(".handle").removeClass("hide");
+                if ($operate == "del"){
+                    $(".contents").addClass("hide");
+                }
+                $.ajax({
+                    url:"/model_message/",
+                    type:"POST",
+                    data:{"teacher_id":$id,"operate":$operate},
+                    dataType:"JSON",
+                    success:function (data) {
+                        $.each(data[0],function (i,row) {
+                           var $tag=$("<option>");
+                            $tag.val(row.id);
+                            $tag.text(row.title);
+                            if (data[1].indexOf(row.id)==-1){
+                                $(".choice").append($tag);
+                            }
+                            else {
+                                $(".result").append($tag);
+                            }
+
+                        });
+                    }
+                });
+                $(".load").addClass("hide");
+                $(".models").removeClass("hide");
+            });
+            var $select1=$("[name='choice']");
+            var $select2=$("[name='result']");
+            $(".button button").click(function () {
+                var $text=$(this).text().trim();
+                var $option1=$("[name='choice'] option:selected");
+                var $option2=$("[name='result'] option:selected");
+                if($text==">"){
+                    $select2.append($option1);
+            }
+                else if($text==">>"){
+                    $select2.append($select1.children());
+                }
+                else if($text=="<"){
+                    $select1.append($option2);
+                }
+                else {
+                    $select1.append($select2.children());
+                }
+            });
+            $('.submit').click(function () {
+                var $name=$(".name").val();
+                $select2.children().prop("selected","True");
+                var $class_list_id=$select2.val();
+                $.ajax({
+                    url:"/model_modify/",
+                    type:"POST",
+                    data:{"name":$name,"class_list_id":$class_list_id,"operate":$operate,"teacher_id":$id},
+                    dataType:"JSON",
+                    traditional:true,
+                    success:function (data) {
+                        if(data.status){
+                            location.reload()
+                        }
+                        else {
+                            alert(data.message)
+                        }
+                    }
+                })
+            });
+            $(".cancle").click(function () {
+                $(".handle,.models").addClass("hide");
+                $(".content").removeClass("hide");
+                $(".select").empty();
+            })
+        })
+    </script>
+{% endblock %}

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .teacher_name,h1{
+            margin: 5px;
+        }
+        .select{
+            display: inline-block;
+            width: 80px;
+            height: 120px;
+        }
+        .button{
+            display: inline-block;
+            width: 30px;
+            vertical-align: 20px;
+        }
+        .button button{
+            width: 30px;
+        }
+        .submit{
+            margin-left: 75px;
+        }
+    </style>
+</head>
+<body>
+    <h1>添加教师</h1>
+    <div class="teacher_name">教师姓名<input name="name" type="text"></div>
+    <div>
+    <select class="select" name="choice" size="5" multiple>
+        {% for foo in class_list %}
+            <option value="{{ foo.id }}">{{ foo.title }}</option>
+        {% endfor %}
+    </select>
+    <div class="button">
+        <button> > </button>
+        <button> >> </button>
+        <button> < </button>
+        <button> << </button>
+    </div>
+    <select class="select" name="result" size="5" multiple></select>
+    </div>
+    <button class="submit">提交</button>
+</body>
+<script src="/static/jquery-3.2.1.js"></script>
+<script>
+    $(function () {
+        var $select1=$("[name='choice']");
+        var $select2=$("[name='result']");
+        $(".button button").click(function () {
+            var $text=$(this).text().trim();
+            var $option1=$("[name='choice'] option:selected");
+            var $option2=$("[name='result'] option:selected");
+            if($text==">"){
+                $select2.append($option1);
+        }
+            else if($text==">>"){
+                $select2.append($select1.children());
+            }
+            else if($text=="<"){
+                $select1.append($option2);
+            }
+            else {
+                $select1.append($select2.children());
+            }
+        });
+        $('.submit').click(function () {
+            var $name=$("[name='name']").val();
+            $select2.children().prop("selected","True");
+            var $class_list_id=$select2.val();
+            $.ajax({
+                url:"/add_teacher/",
+                type:"POST",
+                data:{"name":$name,"class_list_id":$class_list_id,},
+                dataType:"JSON",
+                success:function (data) {
+                    if(data.status){
+                        location.href="/teacher/"
+                    }
+                    else {
+                        alert(data.message)
+                    }
+                }
+            })
+        })
+    })
+</script>
+</html>

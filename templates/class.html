@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+
+{% block css %}
+    <style>
+        .hide{
+            display: none;
+        }
+        .shadow{
+            position: fixed;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            background-color: black;
+            opacity: 0.4;
+            z-index: 999;
+        }
+        .model{
+            z-index: 1000;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            height: 300px;
+            width: 400px;
+            background-color: white;
+            margin-left: -200px;
+            margin-top: -150px;
+        }
+    </style>
+{% endblock %}
+
+{% block xx %}
+<h1>班级信息</h1>
+    <a href="/add_class/">添加班级</a>
+    <button class="show" id="/model_add_class/">模态添加</button>
+    <table border="1px">
+        <tr>
+            <th>id</th>
+            <th>班级名称</th>
+            <th>操作</th>
+            <th>模态操作</th>
+        </tr>
+        {% for row in class_list %}
+            <tr>
+                <td>{{ row.id }}</td>
+                <td>{{ row.title }}</td>
+                <td><a href="/edite_class/?id={{ row.id }}">编辑</a>|<a href="/del_class/?id={{ row.id }}">删除</a></td>
+                <td><button value="{{ row.title }}" id="/model_edite_class/?id={{ row.id }}" class="show">模态编辑</button>|
+                    <button value="{{ row.title }}" id="/model_del_class/?id={{ row.id }}" class="show">删除</button></td>
+            </tr>
+        {% endfor %}
+    </table>
+    <div class="hide shadow handel"></div>
+    <div class="hide model handel">
+        <h2></h2>
+        <p>班级名称<input type="text" name="name"></p>
+        <button onclick="Ajaxsend()">确认</button>
+        <button onclick="hiden()">取消</button>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="/static/jquery-3.2.1.js"></script>
+    <script>
+        var $url;
+        $(".show").click(function () {
+            $(".handel").removeClass("hide");
+            var $text=$(this).text();
+            $("h2").text($text);
+            $('[name="name"]').val($(this).val());
+            $url=$(this).prop("id");
+        });
+        function hiden() {
+            $(".handel").addClass("hide")
+        }
+        function Ajaxsend() {
+            $.ajax({
+                url:$url,
+                type:"POST",
+                data:{"title":$('[name="name"]').val()},
+                success:function (data) {
+                    if (data=="ok"){
+{#                        location.href='/search_class/'#}
+                        location.reload();
+                    }
+                    else{
+                        alert("请正确输入信息！！！")
+                    }
+                }
+            })
+        }
+    </script>
+{% endblock %}
