@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
+<<<<<<< Updated upstream
     <list default="true" id="cdce5496-b8a9-4c6e-8fc9-c55798837fd0" name="Default" comment="" />
+=======
+    <list default="true" id="cdce5496-b8a9-4c6e-8fc9-c55798837fd0" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/666.txt" afterPath="$PROJECT_DIR$/666.txt" />
+    </list>
+>>>>>>> Stashed changes
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
