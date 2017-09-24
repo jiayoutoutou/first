@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+<<<<<<< HEAD
     <file url="file://$PROJECT_DIR$/555.txt" charset="GBK" />
     <file url="file://$PROJECT_DIR$/666.txt" charset="GBK" />
+=======
+    <file url="file://$PROJECT_DIR$/666.txt" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/dev.txt" charset="UTF-8" />
+>>>>>>> dev
   </component>
 </project>
